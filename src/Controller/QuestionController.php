@@ -102,4 +102,39 @@ class QuestionController extends AbstractController
         // return new Response('Failed', 404);
         
     }
+    #[Route('/question/update/{id}', name: 'app_question_update', methods:['PUT'])]
+    public function questionUpdate(Question $question, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
+    {
+        // if($request->isXmlHttpRequest()) {
+
+        
+            $recContent = $request->getContent();
+
+            $data = json_decode($recContent);
+
+            $question->setTitle($data->title);
+            $question->setStatus($data->status);
+
+            
+            $question->setUpdatedAt(new \DateTimeImmutable());
+
+            $errors = $validator->validate($question);
+
+            if (count($errors) > 0) {
+
+                $errorsString = (string) $errors;
+            
+                return new Response($errorsString);
+            }
+    
+            $em->persist($question);
+            $em->flush();
+
+        
+
+            return new Response('ok', 201);
+        // }
+        // return new Response('Failed', 404);
+        
+    }
 }
