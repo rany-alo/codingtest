@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\QuestionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\QuestionRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
@@ -13,24 +14,31 @@ class Question
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_questions'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['list_questions'])]
     private ?string $title = null;
 
     #[ORM\Column]
+    #[Groups(['list_questions'])]
     private ?bool $promoted = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['list_questions'])]
     private ?string $status = null;
 
     #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class)]
+    #[Groups(['list_questions'])]
     private Collection $answers;
 
     #[ORM\Column]
+    #[Groups(['list_questions'])]
     private ?\DateTimeImmutable $created_at = null;
 
     #[ORM\Column]
+    #[Groups(['list_questions'])]
     private ?\DateTimeImmutable $updated_at = null;
 
     public function __construct()
