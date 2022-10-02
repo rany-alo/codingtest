@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\QuestionRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
@@ -139,5 +142,26 @@ class Question
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('title', new NotBlank([
+            'message' => 'Le title est obligatoire'
+        ]));
+        $metadata->addPropertyConstraint('promoted', new NotBlank([
+            'message' => 'Le promoted est obligatoire'
+        ]));
+        $metadata->addPropertyConstraint('status', new NotBlank([
+            'message' => 'Le status est obligatoire'
+        ]));
+        $metadata->addPropertyConstraint('status', new Assert\Choice([
+            'choices' => ['draft', 'published'],
+            'message' => 'Le status doit être [draft ou published].',
+        ]));
+        $metadata->addPropertyConstraint('promoted', new Assert\Choice([
+            'choices' => ['true', 'false'],
+            'message' => 'Le promoted doit être [true ou false].',
+        ]));
     }
 }

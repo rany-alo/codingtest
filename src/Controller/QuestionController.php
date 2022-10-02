@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class QuestionController extends AbstractController
@@ -29,7 +30,7 @@ class QuestionController extends AbstractController
         
     }
     #[Route('/question/add', name: 'app_question_add', methods:['POST'])]
-    public function questionAdd(Request $request, EntityManagerInterface $em): Response
+    public function questionAdd(Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         // if($request->isXmlHttpRequest()) {
 
@@ -46,6 +47,15 @@ class QuestionController extends AbstractController
             
             $question->setCreatedAt(new \DateTimeImmutable());
             $question->setUpdatedAt(new \DateTimeImmutable());
+
+            $errors = $validator->validate($question);
+
+            if (count($errors) > 0) {
+
+                $errorsString = (string) $errors;
+            
+                return new Response($errorsString);
+            }
     
             $em->persist($question);
             $em->flush();
@@ -58,7 +68,8 @@ class QuestionController extends AbstractController
         
     }
     #[Route('/question/addanswer/{id}', name: 'app_answer_add', methods:['POST'])]
-    public function answerAdd($id, Request $request, QuestionRepository $questionRepository, EntityManagerInterface $em): Response
+    public function answerAdd($id, Request $request, QuestionRepository $questionRepository, 
+                                EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         // if($request->isXmlHttpRequest()) {
 
@@ -72,7 +83,15 @@ class QuestionController extends AbstractController
             $answer->setBody($data->body);
             $answer->setQuestion($questionRepository->findOneBy(["id" => $id]));
 
-    
+            $errors = $validator->validate($answer);
+
+            if (count($errors) > 0) {
+
+                $errorsString = (string) $errors;
+            
+                return new Response($errorsString);
+            }
+
             $em->persist($answer);
             $em->flush();
 

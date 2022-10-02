@@ -5,6 +5,11 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AnswerRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+
 
 #[ORM\Entity(repositoryClass: AnswerRepository::class)]
 class Answer
@@ -66,5 +71,19 @@ class Answer
         $this->question = $question;
 
         return $this;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('channel', new NotBlank([
+            'message' => 'Le channel est obligatoire'
+        ]));
+        $metadata->addPropertyConstraint('body', new NotBlank([
+            'message' => 'Le body est obligatoire'
+        ]));
+        $metadata->addPropertyConstraint('channel', new Assert\Choice([
+            'choices' => ['faq', 'bot'],
+            'message' => 'Le channel doit être [faq ou bot].',
+        ]));
     }
 }
