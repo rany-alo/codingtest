@@ -10,8 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class QuestionController extends AbstractController
 {
@@ -105,8 +107,11 @@ class QuestionController extends AbstractController
     #[Route('/question/update/{id}', name: 'app_question_update', methods:['PUT'])]
     public function questionUpdate(Question $question, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
-        // if($request->isXmlHttpRequest()) {
 
+            $dispatcher = new EventDispatcher;
+            $dispatcher->addListener('updateEvent', function() {
+                dd('coco');
+            });
         
             $recContent = $request->getContent();
 
@@ -130,11 +135,10 @@ class QuestionController extends AbstractController
             $em->persist($question);
             $em->flush();
 
-        
+            $dispatcher->dispatch(new Event, 'updateEvent');
 
             return new Response('ok', 201);
-        // }
-        // return new Response('Failed', 404);
+
         
     }
 }
