@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Assert\Blank;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\QuestionRepository;
 use Doctrine\Common\Collections\Collection;

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Answer;
+use App\Entity\HistoricQuestion;
 use App\Entity\Question;
+use App\EventListener\QuestionUpdate;
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +36,6 @@ class QuestionController extends AbstractController
     #[Route('/question/add', name: 'app_question_add', methods:['POST'])]
     public function questionAdd(Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
-        // if($request->isXmlHttpRequest()) {
 
             $question = new Question();
 
@@ -65,15 +66,13 @@ class QuestionController extends AbstractController
         
 
             return new Response('ok', 201);
-        // }
-        // return new Response('Failed', 404);
+
         
     }
     #[Route('/question/addanswer/{id}', name: 'app_answer_add', methods:['POST'])]
     public function answerAdd($id, Request $request, QuestionRepository $questionRepository, 
                                 EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
-        // if($request->isXmlHttpRequest()) {
 
             $answer = new Answer();
 
@@ -100,23 +99,17 @@ class QuestionController extends AbstractController
         
 
             return new Response('ok', 201);
-        // }
-        // return new Response('Failed', 404);
+
         
     }
     #[Route('/question/update/{id}', name: 'app_question_update', methods:['PUT'])]
     public function questionUpdate(Question $question, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
-
-            $dispatcher = new EventDispatcher;
-            $dispatcher->addListener('updateEvent', function() {
-                dd('coco');
-            });
         
             $recContent = $request->getContent();
-
             $data = json_decode($recContent);
 
+        if($question->getTitle() != $data->title || $question->getStatus() != $data->status){
             $question->setTitle($data->title);
             $question->setStatus($data->status);
 
@@ -131,13 +124,13 @@ class QuestionController extends AbstractController
             
                 return new Response($errorsString);
             }
-    
+            
             $em->persist($question);
             $em->flush();
 
-            $dispatcher->dispatch(new Event, 'updateEvent');
-
             return new Response('ok', 201);
+        }
+        return new Response('Il faut changer le titre ou le statut', 406);
 
         
     }
