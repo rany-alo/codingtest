@@ -5,17 +5,15 @@ namespace App\Controller;
 use App\Entity\Answer;
 use App\Entity\HistoricQuestion;
 use App\Entity\Question;
-use App\EventListener\QuestionUpdate;
 use App\Repository\QuestionRepository;
+use App\Services\ExporterCsv;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Contracts\EventDispatcher\Event;
 
 class QuestionController extends AbstractController
 {
@@ -132,6 +130,13 @@ class QuestionController extends AbstractController
         }
         return new Response('Il faut changer le titre ou le statut', 406);
 
+        
+    }
+    
+    #[Route('/question/showcsv', name: 'app_question_showcsv', methods:['GET'])]
+    public function questionsShowCsv(ExporterCsv $exporterCvs):Response
+    {
+        return $exporterCvs->export(new HistoricQuestion);
         
     }
 }

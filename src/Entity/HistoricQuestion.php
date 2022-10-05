@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\HistoricQuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\HistoricQuestionRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: HistoricQuestionRepository::class)]
 class HistoricQuestion
@@ -11,15 +12,19 @@ class HistoricQuestion
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_questions'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['list_questions'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['list_questions'])]
     private ?string $status = null;
 
     #[ORM\Column]
+    #[Groups(['list_questions'])]
     private ?\DateTimeImmutable $created_at = null;
 
     public function getId(): ?int
