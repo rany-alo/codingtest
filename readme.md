@@ -3,7 +3,7 @@ Le projet est un API pour valider un Q&A et le stocker dans une base de données
 
 ## Les langages utilisés dans ce projet : 
 - PHP 8 
-- Framework Symfony 
+- Framework Symfony 6
 - Maridb 
   
 ## Les outils utilisés dans ce projet :
